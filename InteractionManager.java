@@ -28,6 +28,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Control;
 
 class InteractionManager implements MouseListener, MouseMoveListener, KeyListener
@@ -54,7 +55,18 @@ class InteractionManager implements MouseListener, MouseMoveListener, KeyListene
         mode = Mode.NONE;
 	}
 	
-	public void mouseDoubleClick (MouseEvent e) {}
+	public void mouseDoubleClick (MouseEvent e)
+	{
+		Shape element = manager.findElement(e.x, e.y);
+		if (element != null)
+		{
+			manager.selection = element;
+			if (element instanceof Room)
+				new RoomDialog(Display.getDefault().getActiveShell(), (Room)element);
+		}
+		
+		mode = Mode.NONE;
+	}
 	
 	public void mouseDown (MouseEvent e)
 	{
