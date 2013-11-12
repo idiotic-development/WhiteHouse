@@ -61,7 +61,18 @@ public class PaintManager implements PaintListener
 		// Set Colors
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_GRAY));
 		e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
-		Rectangle bounds = ((Composite)e.widget).getClientArea();
+		Rectangle bounds = ((Composite)e.widget).getBounds();
+		
+		// Set canvas size
+		Collection<Room> rooms = manager.getFloor(manager.floor);
+		Iterator<Room> iterator = rooms.iterator();
+		while (iterator.hasNext())
+        {
+            Room room = iterator.next();
+			bounds.add(new Rectangle(room.x, room.y, room.width, room.height));
+        }
+		
+		((Composite)e.widget).setBounds(bounds);
 		
 		// Draw the grid, only draws what is needed
 		int x, y;
@@ -76,8 +87,7 @@ public class PaintManager implements PaintListener
 		// Draw rooms and connections.
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
 
-		Collection<Room> rooms = manager.getFloor(manager.floor);
-		Iterator<Room> iterator = rooms.iterator();
+		iterator = rooms.iterator();
 		while (iterator.hasNext())
         {
             Room room = iterator.next();
