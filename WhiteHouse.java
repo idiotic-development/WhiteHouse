@@ -90,6 +90,7 @@ public class WhiteHouse
 				Rectangle area = shell.getClientArea();
 				Rectangle bounds = rose.getBounds();
 				scroll.setBounds(area);
+				manager.setSize(area.width, area.height);
 				rose.setLocation(area.width-bounds.width, area.height-bounds.height);
 			}
 		});

@@ -57,6 +57,21 @@ public class RoomManager
 		this.canvas = canvas;
 	}
 	
+	public void setSize (int width, int height)
+	{
+		Rectangle bounds = new Rectangle (0, 0, width, height);
+		Collection<Room> list = getFloor();
+		Iterator<Room> iterator = list.iterator();
+		while (iterator.hasNext())
+		{
+			Room room = iterator.next();
+			if (!bounds.contains(room.getBounds()))
+				return;
+		}
+		
+		canvas.setSize(width, height);
+	}
+	
 	public Room newRoom (int x, int y, String name, String desc)
 	{
 		Room room = new Room();
@@ -277,6 +292,11 @@ public class RoomManager
 		}
 		
 		return element;
+	}
+	
+	public Collection<Room> getFloor ()
+	{
+		return getFloor(floor);
 	}
 	
 	public Collection<Room> getFloor (int z)
