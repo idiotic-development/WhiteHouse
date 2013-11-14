@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$(uname)" == "Darwin" ]; then
-    PARAM="$PARAM -XstartOnFirstThread "
+    RUN_PARAM="$PARAM -XstartOnFirstThread "
     if [ "$(uname -m)" = "x86_64" ]; then
         SWT="lib/swt-mac64.jar"
     else
@@ -23,5 +23,8 @@ fi
 if [ "$1" == "compile" ]; then
     javac $PARAM -cp .:$SWT -d . *.java
 elif [ "$1" == "run" ]; then	
-    java $PARAM -cp .:$SWT com.github.redhatter.whitehouse.WhiteHouse
+	if [ -n "$RUN_PARAM" ]; then
+		echo "Running with parameters $PARAM ..."
+	fi
+    java $RUN_PARAM -cp .:$SWT com.github.redhatter.whitehouse.WhiteHouse
 fi
