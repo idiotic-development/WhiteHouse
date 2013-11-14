@@ -36,6 +36,16 @@ import java.awt.geom.PathIterator;
 
 class Connection implements Shape
 {
+	public enum Type
+	{
+		ONE_WAY_B,
+		ONE_WAY_A,
+		LOCKED,
+		NORMAL
+	}
+	
+	public Type type = Type.NORMAL;
+	
 	private List<Point> segments = new LinkedList<Point>();
 	
 	private Room a;

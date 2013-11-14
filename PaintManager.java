@@ -152,20 +152,101 @@ public class PaintManager implements PaintListener
 	{
 		if (connection == null)
 			return;
-				
+		
+		if (connection.type == Connection.Type.LOCKED)
+			gc.setLineStyle(SWT.LINE_DOT);
+			
         if (connection == manager.selection)
 			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
         
 		Iterator<Point> iterator = connection.iterator();
 		Point a = iterator.next();
+		int distance = 0;
 		while (iterator.hasNext())
 		{
 			Point b = iterator.next();
+			
+			if (connection.type == Connection.Type.ONE_WAY_A)
+				drawArrow(a, b, false, gc);
+			else if (connection.type == Connection.Type.ONE_WAY_B)
+				drawArrow(a, b, true, gc);
+			
 			gc.drawLine(a.x, a.y, b.x, b.y);
 			a = b;
 		}
         
         if (connection == manager.selection)
 			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		
+		if (connection.type == Connection.Type.LOCKED)
+			gc.setLineStyle(SWT.LINE_SOLID);
+	}
+	
+	// Draw an arrow half way between a and b
+	private void drawArrow (Point a, Point b, boolean reverse, GC gc)
+	{	
+		// Find half way point
+		int x1 = a.x+(b.x-a.x)/2;
+		int y1 = a.y+(b.y-a.y)/2;
+		
+		// init
+		int x2, y2;
+		int x3 = 0;
+		int y3 = 0;
+		
+		// Difference for calculating slope		
+		double mx = a.x-b.x;
+		double my = a.y-b.y;
+		
+		if (mx == 0)
+		{
+			x2 = x1 - 10;
+			y2 = y1;
+			x3 = x1;
+			y3 = y1 + 10;
+			x1 += 10;
+			y1 -= 10;
+		}
+		else if (my == 0)
+		{
+			x2 = x1;
+			y2 = y1 - 10;
+			x3 = x1 + 10;
+			y3 = y1;
+			x1 -= 10;
+			y1 += 10;
+		} else
+		{
+			// Slope
+			double m = my/mx;
+			
+			// Slop after 90deg turn
+			double mi = (1/m)*-1;
+			
+			// Slope equation and Pythagorean theorem to find 8px away from line
+			double x2l = 8/Math.sqrt(mi*mi+1);
+			x2 = x1 + (int)x2l;
+			y2 = y1 + (int)(mi*x2l);
+			
+			// Again to find 15px up or down line
+			double x3l = 15/Math.sqrt(m*m+1);
+			if (reverse)
+			{
+				x3 = x1 - (int)x3l;
+				y3 = y1 - (int)(m*x3l);
+			} else
+			{
+				x3 = x1 + (int)x3l;
+				y3 = y1 + (int)(m*x3l);
+			}
+			
+			x1 -= (int)x2l;
+			y1 -= (int)(mi*x2l);
+		}
+		
+		// Draw Arrow
+		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		gc.fillPolygon(new int[]{x1, y1, x2, y2, x3, y3, });
+		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 	}
 }

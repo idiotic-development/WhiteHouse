@@ -60,9 +60,29 @@ class InteractionManager implements MouseListener, MouseMoveListener, KeyListene
 		Shape element = manager.findElement(e.x, e.y);
 		if (element != null)
 		{
-			manager.selection = element;
 			if (element instanceof Room)
 				new RoomDialog(Display.getDefault().getActiveShell(), (Room)element);
+			if (element instanceof Connection)
+			{
+				Connection connection = (Connection)element;
+				
+				switch (connection.type)
+				{
+					case NORMAL:
+						connection.type = Connection.Type.LOCKED;
+						break;
+					case LOCKED:
+						connection.type = Connection.Type.ONE_WAY_A;
+						break;
+					case ONE_WAY_A:
+						connection.type = Connection.Type.ONE_WAY_B;
+						break;
+					case ONE_WAY_B:
+						connection.type = Connection.Type.NORMAL;
+						break;
+				}
+				
+			}
 		}
 		
 		mode = Mode.NONE;
