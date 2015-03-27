@@ -10,6 +10,7 @@ namespace WhiteHouse
 
 		new Map map;
 		ScrolledWindow scrolled;
+		MenuBar bar;
 
 		public Window ()
 		{
@@ -20,7 +21,6 @@ namespace WhiteHouse
 			set_icon_name ("white-house");
 
 			title = "White House";
-			destroy.connect (Gtk.main_quit);
 			window_position = Gtk.WindowPosition.CENTER;
 			var box = new Box (Orientation.VERTICAL, 0);
 			add (box);
@@ -139,8 +139,36 @@ namespace WhiteHouse
 
 			set_default_size (960, 800);
 
-			var bar = new MenuBar (this, map, slider, scrolled);
+			bar = new MenuBar (this, map, slider, scrolled);
 			box.pack_start (bar, false, false);
+		}
+
+		public override bool delete_event (Gdk.EventAny event)
+		{
+			if (map.drawable_list.size == 0)
+			{
+				Gtk.main_quit ();
+				return false;
+			}
+
+			var msg = new Gtk.MessageDialog (this, Gtk.DialogFlags.MODAL,
+												Gtk.MessageType.QUESTION,
+												Gtk.ButtonsType.NONE,
+												"Save or discard changes?");
+			msg.add_button ("Save", Gtk.ResponseType.YES);
+			msg.add_button ("Discard", Gtk.ResponseType.NO);
+			msg.add_button ("Cancel", Gtk.ResponseType.CANCEL);
+			msg.response.connect ((id) =>
+			{
+				if (id == Gtk.ResponseType.YES)
+					bar.save_map ();
+
+				if (id != Gtk.ResponseType.CANCEL)
+					Gtk.main_quit ();
+			});
+			msg.run ();
+			msg.destroy();
+			return true;
 		}
 
 		public void center_room (Room room)

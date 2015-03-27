@@ -58,7 +58,7 @@ public class WhiteHouse.MenuBar : Gtk.MenuBar
 
 		item = new Gtk.MenuItem.with_label ("Exit");
 		item.add_accelerator("activate", accel_group, 'q', Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
-		item.activate.connect (Gtk.main_quit);
+		item.activate.connect (() => parent.delete_event (null));
 		menu.add (item);
 
 		item = new Gtk.MenuItem.with_mnemonic ("_Edit");
@@ -359,7 +359,7 @@ public class WhiteHouse.MenuBar : Gtk.MenuBar
 	}
 
 	File map_file = null;
-	private void save_map ()
+	public void save_map ()
 	{
 		if (map_file == null)
 		{
