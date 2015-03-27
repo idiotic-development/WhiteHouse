@@ -6,8 +6,8 @@ public class WhiteHouse.Map : DrawingArea
 {
 	public signal void selection_changed ();
 
-	public new static WhiteHouse.Map map; // Ugly hack to give all objects access
-	public static int GRID_SIZE = 30; // In pixels
+	public static int DEFAULT_GRID_SIZE = 30; // In pixels
+	public static int GRID_SIZE = DEFAULT_GRID_SIZE;
 	public static double FLOOR_OFFSET_X = 0.2; // In map coords
 	public static double FLOOR_OFFSET_Y = 0.3;
 
@@ -68,7 +68,16 @@ public class WhiteHouse.Map : DrawingArea
 	 */
 	public Drawable drag_target { get; set; }
 
-	public int z_level { get; set; default = 0; }
+	int _z_level = 0;
+	public int z_level
+	{ 
+		get { return _z_level; }
+		set
+		{
+			_z_level = value;
+			queue_draw ();
+		}
+	}
 
 	public void clear_selection ()
 	{
@@ -109,8 +118,6 @@ public class WhiteHouse.Map : DrawingArea
 
 	public Map ()
 	{
-		map = this;
-
 		expand = true;
 
 		selection_changed ();
@@ -119,18 +126,9 @@ public class WhiteHouse.Map : DrawingArea
 		add_events (EventMask.POINTER_MOTION_MASK|EventMask.BUTTON_PRESS_MASK|EventMask.BUTTON_RELEASE_MASK);
 	}
 
-	/*
-	 *	Return true if 'dir' is a direction command.
-	 */
-	// public static bool isDirection (string dir)
-	// {
-	// 	return (dir == "n" || "e" || "s" || "w" || "u" || "d" ||
-	// 			"north" || "east" || "south" || "west" || "up" || "down");
-	// }
-
 	public Room? move_selection (string direction)
 	{
-		var room = map.room_dialog (null);
+		var room = room_dialog (null);
 		if (room == null)
 			return null;
 
@@ -146,7 +144,7 @@ public class WhiteHouse.Map : DrawingArea
 
 	public Passage connect_rooms (Room start, Room end, string direction)
 	{
-		var passage = new Passage.with_end (start, end);
+		var passage = new_passage (start, end);
 		switch (direction)
 		{
 			case "north":
@@ -258,6 +256,21 @@ public class WhiteHouse.Map : DrawingArea
 		}
 	}
 
+	public void place (Room room)
+	{
+		var @break = false;
+		for (var x = 0.0; !break; x = (x > 0) ? -x : -x + room.width + 2)
+		{
+			room.x = x;
+			room.y = 0;
+
+			@break = true;
+			foreach (var drawable in drawable_list)
+				if (drawable is Room && overlaps (drawable as Room))
+					@break = false;
+		}
+	}
+
 	public bool overlaps (Room room)
 	{
 		var x1 = room.x - 1;
@@ -288,33 +301,23 @@ public class WhiteHouse.Map : DrawingArea
 	 *	Create new room with the given name and description (possibly none).
 	 */
 	public Room new_room (string name, string? desc)
-	{
-		
-		var room = new Room (name, desc);
-
-		// Redraw when anything about the room changes
-		room.notify.connect ((obj, prop) =>
-		{
-			// If the property is a Passage add it 
-			// to the list and connect for redraw
-			if (prop.value_type == typeof(Passage))
-			{
-				var val = GLib.Value (typeof(Passage));
-				obj.get_property (prop.name, ref val);
-				var p_val = ((Passage)val);
-				if (p_val != null && !drawable_list.contains (p_val))
-				{
-					p_val.notify.connect ((obj, prop) => queue_draw ());
-					drawable_list.add (p_val);
-				}
-			}
-
-			queue_draw ();
-		});
-
+	{		
+		var room = new Room (this, name, desc);
 		drawable_list.add (room);
 
 		return room;
+	}
+
+	public Passage new_passage (Room start, Room? end)
+	{
+		Passage passage;
+		if (end == null)
+			passage = new Passage (this, start);
+		else
+			passage = new Passage.with_end (this, start, end);
+		drawable_list.add (passage);
+
+		return passage;
 	}
 
 	public Room? room_dialog (Room? room)
@@ -351,10 +354,10 @@ public class WhiteHouse.Map : DrawingArea
 	public Drawable get_drawable (double x, double y)
 	{
 		Drawable return_val = null;
-		foreach (var drawable in drawable_list)
-			if (drawable.z == z_level && drawable.contains (x, y))
+		for (var i = drawable_list.size-1; i >= 0; i--)
+			if (drawable_list[i].z == z_level && drawable_list[i].contains (x, y))
 			{
-				return_val = drawable;
+				return_val = drawable_list[i];
 				if (return_val is Room) // Rooms have precedence
 					break;
 			}
@@ -364,25 +367,31 @@ public class WhiteHouse.Map : DrawingArea
 
 	/* Event overrides */
 
+	public override void size_allocate (Allocation allocation)
+	{
+		if (allocation.width > width*GRID_SIZE)
+			width = (double)allocation.width/GRID_SIZE;
+
+		if (allocation.height > height*GRID_SIZE)
+			height = (double)allocation.height/GRID_SIZE;
+
+		base.size_allocate (allocation);
+	}
+
 	/*
 	 *	Draw the grid, then delegate to each drawable.
 	 */
+	static int num = 0;
 	public override bool draw (Context ctx)
 	{
-		if (width == 0 && height == 0)
-		{
-			width = (double)get_allocated_width ()/GRID_SIZE;
-			height = (double)get_allocated_height ()/GRID_SIZE;
-		}
-
 		var color = Gdk.RGBA ();
-		color.parse (Window.SETTINGS.get_string ("background-color"));
+		color.parse (SETTINGS.get_string ("background-color"));
 		ctx.set_source_rgb (color.red, color.green, color.blue);
 		ctx.paint ();
 
 		if (show_grid)
 		{
-			color.parse (Window.SETTINGS.get_string ("background-grid"));
+			color.parse (SETTINGS.get_string ("background-grid"));
 			ctx.set_source_rgb (color.red, color.green, color.blue);
 			ctx.set_line_width (1);
 			
@@ -444,7 +453,9 @@ public class WhiteHouse.Map : DrawingArea
 				room.x = (int)(x - room.width/2);
 				room.y = (int)(y - room.height/2);
 			}
-		} 
+		}
+
+		queue_draw ();
 
 		return false;
 	}
@@ -478,6 +489,8 @@ public class WhiteHouse.Map : DrawingArea
 		} else
 			clear_selection ();
 
+		queue_draw ();
+
 		return false;
 	}
 
@@ -510,6 +523,8 @@ public class WhiteHouse.Map : DrawingArea
 				hover.mouse_enter ();
 			}
 		}
+
+		queue_draw ();
 
 		return false;
 	}
@@ -653,7 +668,7 @@ public class WhiteHouse.Map : DrawingArea
 		var room_list = obj.get_array_member ("room_list");
 		room_list.foreach_element ((a, i, node) =>
 		{
-			var room = Room.deserialize (node);
+			var room = Room.deserialize (this, node);
 			drawable_list.add (room);
 			rooms.set ((uint)node.get_object ().get_int_member ("hash"), room);
 		});
@@ -662,7 +677,7 @@ public class WhiteHouse.Map : DrawingArea
 		var array = obj.get_array_member ("passage_list");
 		array.foreach_element ((a, i, node) =>
 		{
-			var passage = Passage.deserialize (node, rooms);
+			var passage = Passage.deserialize (this, node, rooms);
 			drawable_list.add (passage);
 			passages.set ((uint)node.get_object ().get_int_member ("hash"), passage);
 		});

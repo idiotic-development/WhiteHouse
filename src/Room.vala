@@ -25,10 +25,10 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 			_selected = value;
 			if (value)
 			{
-				trh = new Handle (this, 1);
-				tlh = new Handle (this, 2);
-				blh = new Handle (this, 3);
-				brh = new Handle (this, 4);
+				trh = new Handle (map, this, 1);
+				tlh = new Handle (map, this, 2);
+				blh = new Handle (map, this, 3);
+				brh = new Handle (map, this, 4);
 			} else
 			{
 				trh = null;
@@ -45,7 +45,7 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 	{
 		get
 		{
-			if (z == Map.map.z_level - 1)
+			if (z == map.z_level - 1)
 				return _x + Map.FLOOR_OFFSET_X;
 			else
 				return _x;
@@ -54,13 +54,13 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 			_x = value;
 			var x = value;
 			var y = 0.0;
-			Map.map.map_to_viewport (ref x, ref y);
+			map.map_to_viewport (ref x, ref y);
 			x = x / Map.GRID_SIZE;
 			if (x < 0)
-				Map.map.width += (int)(width*2);
+				map.width += (int)(width*2);
 
-			if (x + width > Map.map.width)
-				Map.map.width += (int)(width*2);
+			if (x + width > map.width)
+				map.width += (int)(width*2);
 		}
 	}
 	double _y;
@@ -68,7 +68,7 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 	{
 		get
 		{
-			if (z == Map.map.z_level - 1)
+			if (z == map.z_level - 1)
 				return _y + Map.FLOOR_OFFSET_Y;
 			else
 				return _y;
@@ -77,12 +77,12 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 			_y = value;
 			var x = 0.0;
 			var y = value;
-			Map.map.map_to_viewport (ref x, ref y);
+			map.map_to_viewport (ref x, ref y);
 			y = y / Map.GRID_SIZE;
 			if (y < 0)
-				Map.map.height += (int)(height*2);
-			else if (y + height > Map.map.height)
-				Map.map.height += (int)(height*2);
+				map.height += (int)(height*2);
+			else if (y + height > map.height)
+				map.height += (int)(height*2);
 		}
 	}
 	double _z;
@@ -199,8 +199,11 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 
 	uint32[] seed;
 
-	public Room (string name, string? desc)
+	Map map;
+
+	public Room (Map map, string name, string? desc)
 	{
+		this.map = map;
 		seed = new uint32[4];
 		var rand = new Rand ();
 		seed[0] = rand.next_int ();
@@ -210,12 +213,12 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 
 		this.name = name;
 		this.desc = desc;
-		z = Map.map.z_level;
+		z = map.z_level;
 	}
 
 	public void delete ()
 	{
-		Map.map.drawable_list.remove (this);
+		map.drawable_list.remove (this);
 
 		foreach (var item in passages ())
 			if (item != null)
@@ -261,9 +264,9 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 
 	public void mouse_up (double x, double y, int b)
 	{
-		if (Map.map.drag_target is Passage)
+		if (map.drag_target is Passage)
 		{
-			var p_drag = (Passage)Map.map.drag_target;
+			var p_drag = (Passage)map.drag_target;
 			if (p_drag.start.z > z)
 			{
 				up = p_drag;
@@ -318,7 +321,7 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 		}
 
 		if (selected && tmp_state == State.CLICK)
-			Map.map.room_dialog (this);
+			map.room_dialog (this);
 	}
 
 	double last_x;
@@ -368,8 +371,8 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 
 	public void mouse_enter ()
 	{
-		if (state == State.NONE &&
-			(!(Map.map.drag_target is Passage) || ((Passage)Map.map.drag_target).start.z == z))
+		if ((state == State.NONE || state == State.TAB) &&
+			(!(map.drag_target is Passage) || ((Passage)map.drag_target).start.z == z))
 			state = State.HOVER;
 	}
 	public void mouse_leave ()
@@ -388,153 +391,143 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 	{
 		var x = this.x;
 		var y = this.y;
-		Map.map.map_to_viewport (ref x, ref y);
+		map.map_to_viewport (ref x, ref y);
 		var color = Gdk.RGBA ();
+
+		var hand_drawn = SETTINGS.get_boolean ("room-drawn");
 
 		if (selected || state == State.RESIZE)
 		{
-			color.parse (Window.SETTINGS.get_string ("room-outline"));
-			ctx.set_source_rgb (color.red, color.green, color.blue);
-			ctx.rectangle (x-5, y-5, width*scale+5, height*scale+5);
-			ctx.fill ();
-			color.parse (Window.SETTINGS.get_string ("background-color"));
-			ctx.set_source_rgb (color.red, color.green, color.blue);
-			Map.rectangle (ctx, seed, x-5, y-5, width*scale+5, height*scale+5);
-			ctx.set_line_width (width*scale/20);
-			ctx.stroke ();
+			if (hand_drawn)
+			{
+				color.parse (SETTINGS.get_string ("room-outline"));
+				ctx.set_source_rgb (color.red, color.green, color.blue);
+				ctx.rectangle (x-5, y-5, width*scale+5, height*scale+5);
+				ctx.fill ();
+				color.parse (SETTINGS.get_string ("background-color"));
+				ctx.set_source_rgb (color.red, color.green, color.blue);
+				Map.rectangle (ctx, seed, x-5, y-5, width*scale+5, height*scale+5);
+				ctx.set_line_width (width*scale/20);
+				ctx.stroke ();
+			} else
+			{
+				color.parse (SETTINGS.get_string ("room-outline"));
+				ctx.set_source_rgb (color.red, color.green, color.blue);
+				ctx.rectangle (x, y, width*scale, height*scale);
+				ctx.fill ();
+			}
 
 			foreach (var item in handles ())
 				item.draw (ctx, scale);
 
-			color.parse (Window.SETTINGS.get_string ("room-background"));
+			color.parse (SETTINGS.get_string ("room-background"));
 			ctx.set_source_rgb (color.red, color.green, color.blue);
 		} else if (highlighted)
 		{
-			color.parse (Window.SETTINGS.get_string ("room-outline"));
-			ctx.set_source_rgb (color.red-(1-color.red)/2 , color.green-(1-color.green)/2, color.blue-(1-color.blue)/2);
-			ctx.rectangle (x-5, y-5, width*scale+5, height*scale+5);
-			ctx.fill ();
-			color.parse (Window.SETTINGS.get_string ("background-color"));
-			ctx.set_source_rgb (color.red, color.green, color.blue);
-			Map.rectangle (ctx, seed, x-5, y-5, width*scale+5, height*scale+5);
-			ctx.set_line_width (width*scale/20);
-			ctx.stroke ();
+			if (hand_drawn)
+			{
+				color.parse (SETTINGS.get_string ("room-outline"));
+				ctx.set_source_rgb (color.red-(1-color.red)/2 , color.green-(1-color.green)/2, color.blue-(1-color.blue)/2);
+				ctx.rectangle (x-5, y-5, width*scale+5, height*scale+5);
+				ctx.fill ();
+				color.parse (SETTINGS.get_string ("background-color"));
+				ctx.set_source_rgb (color.red, color.green, color.blue);
+				Map.rectangle (ctx, seed, x-5, y-5, width*scale+5, height*scale+5);
+				ctx.set_line_width (width*scale/20);
+				ctx.stroke ();
+			} else
+			{
+				color.parse (SETTINGS.get_string ("room-outline"));
+				ctx.set_source_rgb (color.red-(1-color.red)/2 , color.green-(1-color.green)/2, color.blue-(1-color.blue)/2);
+				ctx.rectangle (x, y, width*scale, height*scale);
+				ctx.fill ();
+			}
 
-			color.parse (Window.SETTINGS.get_string ("room-background"));
+			color.parse (SETTINGS.get_string ("room-background"));
 			ctx.set_source_rgb (color.red, color.green, color.blue);	
 		} else
 		{
 			// Clear grid
-			color.parse (Window.SETTINGS.get_string ("room-background"));
+			color.parse (SETTINGS.get_string ("room-background"));
 			ctx.set_source_rgb (color.red, color.green, color.blue);
 			ctx.rectangle (x, y, width*scale, height*scale);
 			ctx.fill ();
 
 			// Square outline
-			if (z == Map.map.z_level)
-				color.parse (Window.SETTINGS.get_string ("room-outline"));
+			if (z == map.z_level)
+				color.parse (SETTINGS.get_string ("room-outline"));
 			else
-				color.parse (Window.SETTINGS.get_string ("room-inactive"));
+				color.parse (SETTINGS.get_string ("room-inactive"));
 
 			ctx.set_source_rgb (color.red, color.green, color.blue);
 
 			ctx.set_line_width (2);
-			Map.rectangle (ctx, seed, x, y, width*scale, height*scale);
+			if (hand_drawn)
+				Map.rectangle (ctx, seed, x, y, width*scale, height*scale);
+			else
+				ctx.rectangle (x, y, width*scale, height*scale);
 			ctx.stroke ();
 
 			// Name
-			if (z == Map.map.z_level)
+			if (z == map.z_level)
 			{
-				color.parse (Window.SETTINGS.get_string ("room-text"));
+				color.parse (SETTINGS.get_string ("room-text"));
 				ctx.set_source_rgb (color.red, color.green, color.blue);
 			}
 		}
-		ctx.set_font_size (scale/2);
-		TextExtents ext;
-		ctx.text_extents (name, out ext); // Gets the physical size of the string
-		if (ext.x_bearing + ext.width < width*scale)
-		{
-			ctx.move_to (x + width*scale/2 - (ext.x_bearing + ext.width/2), y + height*scale/2 - (ext.y_bearing + ext.height/2));
-			ctx.show_text (name);
-		} else
-		{
-			var text = name;
-			Gee.List<string> lines = new Gee.ArrayList<string> ();
-			while (text != "")
-			{
-				var line = "";
-				var line_width = 0.0;
-				var word = "";
-				while (line_width < width*scale && text != "")
-				{
-					if (word != "")
-					{
-						line += word;
-						text = (text.index_of (" ") == -1) ? "" : text[text.index_of (" ")+1:text.length];
-					}
 
-					word = (text.index_of (" ") == -1) ? text : text[0:text.index_of (" ")+1];
-					TextExtents size;
-					ctx.text_extents (line + word, out size);
-					line_width = size.width;
-					ctx.text_extents (word, out size);
-					if (size.width > width*scale)
-					{
-						lines.add (word);
-						text = (text.index_of (" ") == -1) ? "" : text[text.index_of (" ")+1:text.length];
-					}
-				}
-				lines.add (line);
-			}
-
-			for (var i = 0; i < lines.size; i++)
-			{
-				TextExtents size;
-				ctx.text_extents (lines[i], out size);
-				ctx.move_to (x + width*scale/2 - size.width/2, y + (height*scale - (size.height+5)*lines.size)/2+size.height + (size.height+5)*i);
-				ctx.show_text (lines [i]);
-			}
-		}
+		var font = Pango.FontDescription.from_string (SETTINGS.get_string ("room-font"));
+		font.set_size ((int)(font.get_size ()*scale/Map.DEFAULT_GRID_SIZE));
+        var layout = Pango.cairo_create_layout (ctx);
+        layout.set_font_description (font);
+        layout.set_width ((int)(width*scale));
+        layout.set_alignment (Pango.Alignment.CENTER);
+        layout.set_text (name, -1);
+        Pango.Rectangle rect;
+        Pango.Rectangle _;
+		layout.get_extents (out _, out rect);
+		ctx.move_to (x+(width*scale)/2, y + (height*scale - rect.height/Pango.SCALE)/2 + rect.y/Pango.SCALE);
+        Pango.cairo_show_layout (ctx, layout);
 
 		// Mouseover details
 		if (state == State.HOVER)
 		{
 			// Top left
-			tl = tl ?? new Tab ("northwest", this);
+			tl = tl ?? new Tab (map, "northwest", this);
 			tl.draw (ctx, scale);
 
 			// Top center
-			tc = tc ?? new Tab ("north", this);
+			tc = tc ?? new Tab (map, "north", this);
 			tc.draw (ctx, scale);
 
 			// Top right
-			tr = tr ?? new Tab ("northeast", this);
+			tr = tr ?? new Tab (map, "northeast", this);
 			tr.draw (ctx, scale);
 
 			// Left center
-			lc = lc ?? new Tab ("west", this);
+			lc = lc ?? new Tab (map, "west", this);
 			lc.draw (ctx, scale);
 
 			// Right center
-			rc = rc ?? new Tab ("east", this);
+			rc = rc ?? new Tab (map, "east", this);
 			rc.draw (ctx, scale);
 
 			// Bottom left
-			bl = bl ?? new Tab ("southwest", this);
+			bl = bl ?? new Tab (map, "southwest", this);
 			bl.draw (ctx, scale);
 
 			// Bottom center
-			bc = bc ?? new Tab ("south", this);
+			bc = bc ?? new Tab (map, "south", this);
 			bc.draw (ctx, scale);
 
 			// Bottom right
-			br = br ?? new Tab ("southeast", this);
+			br = br ?? new Tab (map, "southeast", this);
 			br.draw (ctx, scale);
 
-			d = d ?? new Tab ("down", this);
+			d = d ?? new Tab (map, "down", this);
 			d.draw (ctx, scale);
 
-			u = u ?? new Tab ("up", this);
+			u = u ?? new Tab (map, "up", this);
 			u.draw (ctx, scale);
 		}
 	}
@@ -627,12 +620,12 @@ public class WhiteHouse.Room : GLib.Object, Drawable
 		builder.end_object ();
 	}
 
-	public static Room deserialize (Json.Node node)
+	public static Room deserialize (Map map, Json.Node node)
 	{
 		var obj = node.get_object ();
 		var name = obj.get_string_member ("name");
 		var desc = obj.get_string_member ("desc");
-		var room = Map.map.new_room (name, desc);
+		var room = map.new_room (name, desc);
 		room.width = obj.get_double_member ("width");
 		room.height = obj.get_double_member ("height");
 		room.x = obj.get_double_member ("x");

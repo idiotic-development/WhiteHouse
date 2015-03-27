@@ -27,19 +27,17 @@ public class WhiteHouse.Handle
 	double size = 0.25;
 	Room parent;
 	bool drag = false;
+	Map map;
 
-	public Handle (Room parent, int corner)
+	public Handle (Map map, Room parent, int corner)
 	{
+		this.map = map;
 		this.parent = parent;
 		this.corner = corner;
 	}
 
 	public bool contains (double x, double y)
 	{
-		// return x >= this.x - size/2
-		// 		&& y >= this.y - size/2
-		// 		&& x <= this.x + size/2
-		// 		&& y <= this.y + size/2;
 		return x >= this.x && x <= this.x + size 
 			&& y >= this.y && y <= this.y + size;
 	}
@@ -82,30 +80,19 @@ public class WhiteHouse.Handle
 
 	public void draw (Cairo.Context ctx, double scale)
 	{
-		// var x = this.x;
-		// var y = this.y;
-		// Map.map.map_to_viewport (ref x, ref y);
-
 		ctx.set_line_width (2);
 
 		Gdk.RGBA color = Gdk.RGBA ();
 
-		// color.parse (Window.SETTINGS.get_string ("room-background"));
-		// ctx.set_source_rgb (color.red, color.green, color.blue);
-		// ctx.rectangle (x-size/2*scale, y-size/2*scale, size*scale, size*scale);
-		// ctx.fill ();
-
-		color.parse (Window.SETTINGS.get_string ("room-detail"));
+		color.parse (SETTINGS.get_string ("room-detail"));
 		ctx.set_source_rgb (color.red, color.green, color.blue);
-		// ctx.rectangle (x-size/2*scale, y-size/2*scale, size*scale, size*scale);
-		// ctx.stroke ();
 
 		var x = parent.x;
 		var y = parent.y;
 		var width = parent.width*scale;
 		var height = parent.height*scale;
 		var size = this.size*scale;
-		Map.map.map_to_viewport (ref x, ref y);
+		map.map_to_viewport (ref x, ref y);
 
 		switch (corner)
 		{

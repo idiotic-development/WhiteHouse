@@ -32,74 +32,8 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 	Gee.List<double?> y_list = new Gee.ArrayList<double?> ();
 	Gee.List<uint32?> seed_list = new Gee.ArrayList<uint32?> ();
 	int list_index = -1;
-
-	// Room _end;
-	public Room end
-	{
-		get; //{ return _end; }
-		set;
-		// {
-		// 	if (_end != null)
-		// 	{
-		// 		if (this == _end.north)
-		// 			_end.north = null;
-		// 		else if (this == _end.northeast)
-		// 			_end.northeast = null;
-		// 		else if (this == _end.east)
-		// 			_end.east = null;
-		// 		else if (this == _end.southeast)
-		// 			_end.southeast = null;
-		// 		else if (this == _end.south)
-		// 			_end.south = null;
-		// 		else if (this == _end.southwest)
-		// 			_end.southwest = null;
-		// 		else if (this == _end.west)
-		// 			_end.west = null;
-		// 		else if (this == _end.northwest)
-		// 			_end.northwest = null;
-		// 		else if (this == _end.up)
-		// 			_end.up = null;
-		// 		else if (this == _end.down)
-		// 			_end.down = null;
-		// 	}
-
-		// 	_end = value;
-		// }
-	}
-
-	// Room _start;
-	public Room start
-	{
-		get; //{ return _start; }
-		set;
-		// {
-		// 	if (_start != null)
-		// 	{
-		// 		if (this == _start.north)
-		// 			_start.north = null;
-		// 		else if (this == _start.northeast)
-		// 			_start.northeast = null;
-		// 		else if (this == _start.east)
-		// 			_start.east = null;
-		// 		else if (this == _start.southeast)
-		// 			_start.southeast = null;
-		// 		else if (this == _start.south)
-		// 			_start.south = null;
-		// 		else if (this == _start.southwest)
-		// 			_start.southwest = null;
-		// 		else if (this == _start.west)
-		// 			_start.west = null;
-		// 		else if (this == _start.northwest)
-		// 			_start.northwest = null;
-		// 		else if (this == _start.up)
-		// 			_start.up = null;
-		// 		else if (this == _start.down)
-		// 			_start.down = null;
-		// 	}
-
-		// 	_start = value;
-		// }
-	}
+	public Room end { get; set; }
+	public Room start { get; set; }
 
 	public double x { get; private set; }
 	public double y { get; private set; }
@@ -110,7 +44,7 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		{
 			if (start == null)
 				return -1;
-			if (this == start.west || start.northwest || start.southwest)
+			else if (this == start.west || start.northwest || start.southwest)
 				return start.x;
 			else if (this == start.north || start.south || start.up || start.down)
 				return start.x + start.width/2;
@@ -125,7 +59,7 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		{
 			if (start == null)
 				return -1;
-			if (this == start.northwest || start.north || start.northeast)
+			else if (this == start.northwest || start.north || start.northeast)
 				return start.y;
 			else if (this == start.west || start.east || start.up || start.down)
 				return start.y + start.height/2;
@@ -139,8 +73,14 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		get
 		{
 			if (end == null)
-				return x;
-			else if (this == end.west || end.northwest || end.southwest)
+			{
+				if (this == start.west || start.northwest || start.southwest)
+					return start.x - 0.5;
+				else if (this == start.north || start.south || start.up || start.down)
+					return start.x + start.width/2;
+				else
+					return start.x + start.width + 0.5;
+			} else if (this == end.west || end.northwest || end.southwest)
 				return end.x;
 			else if (this == end.north || end.south || end.up || end.down)
 				return end.x + end.width/2;
@@ -154,8 +94,14 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		get
 		{
 			if (end == null)
-				return y;
-			else if (this == end.northwest || end.north || end.northeast)
+			{
+				if (this == start.northwest || start.north || start.northeast)
+					return start.y - 0.5;
+				else if (this == start.west || start.east || start.up || start.down)
+					return start.y + start.height/2;
+				else
+					return start.y + start.height + 0.5;
+			} else if (this == end.northwest || end.north || end.northeast)
 				return end.y;
 			else if (this == end.west || end.east || end.up || end.down)
 				return end.y + end.height/2;
@@ -164,23 +110,23 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		}
 	}
 
-	public Passage (Room start)
+	Map map;
+
+	public Passage (Map map, Room start)
 	{
+		this.map = map;
 		this.start = start;
 		x = x1;
 		y = y1;
-		z = Map.map.z_level;
+		z = map.z_level;
 		var rand = new Rand ();
 		seed_list.add (rand.next_int ());
 	}
 
-	public Passage.with_end (Room start, Room end)
+	public Passage.with_end (Map map, Room start, Room end)
 	{
-		this.start = start;
+		this (map, start);
 		this.end = end;
-		z = Map.map.z_level;
-		var rand = new Rand ();
-		seed_list.add (rand.next_int ());
 	}
 
 	public void flip ()
@@ -250,7 +196,7 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 
 	public void delete ()
 	{
-		Map.map.drawable_list.remove (this);
+		map.drawable_list.remove (this);
 	}
 
 	public void mouse_down (double x, double y, int b)
@@ -264,9 +210,6 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 
 	public void mouse_up (double x, double y, int b)
 	{
-		if (end == null)
-			this.delete ();
-
 		State tmp_state = state;
 		state = State.NONE;
 
@@ -279,8 +222,6 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 
 			if (Math.fabs (y_val - Math.round (y_val)) < 0.3)
 				y_list[list_index] = Math.round (y_val);
-
-			Map.map.queue_draw ();
 		}
 
 		list_index = -1;
@@ -296,7 +237,6 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 					seed_list.remove_at (i+1);
 					x_list.remove_at (i);
 					y_list.remove_at (i);
-					Map.map.queue_draw ();
 					return;
 				}
 
@@ -315,9 +255,9 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 	{
 		if (state == State.CLICK)
 		{
-			Map.map.drag_target = this;
+			map.drag_target = this;
 			state = State.DRAG;
-		} else if (Map.map.drag_target != this)
+		} else if (map.drag_target != this)
 			return;
 
 		if (end == null)
@@ -340,7 +280,6 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		{
 			x_list[list_index] = x;
 			y_list[list_index] = y;
-			Map.map.queue_draw ();
 		}
 
 	}
@@ -353,19 +292,19 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		if (Math.fabs (z - start.z) == 0.5)
 		{
 			var color = Gdk.RGBA ();
-			color.parse (Window.SETTINGS.get_string ("passage-line"));
+			color.parse (SETTINGS.get_string ("passage-line"));
 			ctx.set_source_rgb (color.red, color.green, color.blue);
 
 			ctx.set_font_size (scale/2);
 
-			var visable = (start.z == Map.map.z_level) ? start : end;
-			var name = (start.z == Map.map.z_level) ? end.name : start.name;
+			var visable = (start.z == map.z_level) ? start : end;
+			var name = (start.z == map.z_level) ? end.name : start.name;
 
 			var x = visable.x;
 			var width = visable.width*scale;
 			var y = visable.y;
 			var height = visable.height*scale;
-			Map.map.map_to_viewport (ref x, ref y);
+			map.map_to_viewport (ref x, ref y);
 
 			if (this == visable.up)
 			{
@@ -392,19 +331,21 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 
 		var color = Gdk.RGBA ();
 
-		if (z == Map.map.z_level)
-			color.parse (Window.SETTINGS.get_string ("passage-line"));
+		if (z == map.z_level)
+			color.parse (SETTINGS.get_string ("passage-line"));
 		else
-			color.parse (Window.SETTINGS.get_string ("room-inactive"));
+			color.parse (SETTINGS.get_string ("room-inactive"));
 
 		ctx.set_source_rgb (color.red, color.green, color.blue);
+
+		var hand_drawn = WhiteHouse.SETTINGS.get_boolean ("passage-drawn");
 
 		double x1 = this.x1;
 		double y1 = this.y1;
 		double x2 = this.x2;
 		double y2 = this.y2;
-		Map.map.map_to_viewport (ref x1, ref y1);
-		Map.map.map_to_viewport (ref x2, ref y2);
+		map.map_to_viewport (ref x1, ref y1);
+		map.map_to_viewport (ref x2, ref y2);
 
 		if (locked)
 			ctx.set_dash ({8, 5}, 0);
@@ -417,16 +358,36 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		{
 			double x = x_list[i];
 			double y = y_list[i];
-			Map.map.map_to_viewport (ref x, ref y);
-			Map.line_to (ctx, seed_list[i+1], x, y);
+			map.map_to_viewport (ref x, ref y);
+			if (hand_drawn)
+				Map.line_to (ctx, seed_list[i+1], x, y);
+			else
+				ctx.line_to (x, y);
 		}
 		
-		Map.line_to (ctx, seed_list[0], x2, y2);
+		if (map.drag_target == this)
+		{
+			double x = this.x;
+			double y = this.y;
+			map.map_to_viewport (ref x, ref y);
+			if (hand_drawn)
+				Map.line_to (ctx, seed_list[0], x, y);
+			else
+				ctx.line_to (x, y);
+		}
+		else
+		{
+			if (hand_drawn)
+				Map.line_to (ctx, seed_list[0], x2, y2);
+			else
+				ctx.line_to (x2, y2);
+		}
+
 		ctx.stroke ();
 
 		if (one_way)
 		{
-			color.parse (Window.SETTINGS.get_string ("passage-detail"));
+			color.parse (SETTINGS.get_string ("passage-detail"));
 			ctx.set_source_rgb (color.red, color.green, color.blue);
 
 			var gap = 3.0;
@@ -447,8 +408,8 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 
 	private void draw_arrow (Context ctx, double x1, double y1, double x2, double y2, double dst)
 	{
-		Map.map.map_to_viewport (ref x1, ref y1);
-		Map.map.map_to_viewport (ref x2, ref y2);
+		map.map_to_viewport (ref x1, ref y1);
+		map.map_to_viewport (ref x2, ref y2);
 
 		var m = (y1 - y2) / (x1 - x2);
 		var x = dst / Math.sqrt (m * m + 1);
@@ -552,12 +513,12 @@ public class WhiteHouse.Passage : GLib.Object, Drawable
 		builder.end_object ();
 	}
 
-	public static Passage deserialize (Json.Node node, Gee.Map<uint, Room> rooms)
+	public static Passage deserialize (Map map, Json.Node node, Gee.Map<uint, Room> rooms)
 	{
 		var obj = node.get_object ();
 		var start = rooms.get ((uint)obj.get_int_member ("start"));
 		var end = rooms.get ((uint)obj.get_int_member ("end"));
-		var passage = new Passage.with_end (start, end);
+		var passage = map.new_passage (start, end);
 
 		if (obj.has_member ("locked"))
 			passage.locked = obj.get_boolean_member ("locked");

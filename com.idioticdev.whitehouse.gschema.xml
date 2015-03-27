@@ -19,6 +19,9 @@
     <key name="passage-detail" type="s">
       <default>"rgb (0, 0, 0)"</default>
     </key>
+    <key name="passage-drawn" type="b">
+      <default>true</default>
+    </key>
     <key name="room-background" type="s">
       <default>"rgb (255, 255, 255)"</default>
     </key>
@@ -33,6 +36,12 @@
     </key>
     <key name="room-inactive" type="s">
       <default>"rgb (205, 205, 205)"</default>
+    </key>
+    <key name="room-font" type="s">
+      <default>""</default>
+    </key>
+    <key name="room-drawn" type="b">
+      <default>true</default>
     </key>
   </schema>
 

@@ -3,12 +3,16 @@ using Gtk;
 public class WhiteHouse.AutomapDialog : Dialog
 {
 	public AutoMapper mapper { get; private set; }
+	Window parent;
+	Map map;
 	FileChooserButton chooser;
 	bool verbose = true;
 	bool skip_to_end = true;
 
-	public AutomapDialog (Window? parent)
+	public AutomapDialog (Window parent, Map map)
 	{
+		this.map = map;
+		this.parent = parent;
 		set_default_size (350, -1);
 		set_modal (true);
 
@@ -42,7 +46,7 @@ public class WhiteHouse.AutomapDialog : Dialog
 		switch (id)
 		{
 			case ResponseType.ACCEPT:
-				mapper = new AutoMapper (chooser.get_file (), verbose, skip_to_end);
+				mapper = new AutoMapper (parent, map, chooser.get_file (), verbose, skip_to_end);
 				break;
 		}
 	}

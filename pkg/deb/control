@@ -1,0 +1,13 @@
+Source: white-house
+Section: games
+Priority: optional
+Maintainer: Timothy Johnson <_c_@mail.com>
+Build-Depends: debhelper (>= 9), autotools-dev
+Standards-Version: 3.9.5
+Homepage: http://idioticdev.com
+#Vcs-Git: https://github.com/RedHatter/White-House.git
+
+Package: white-house
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: An interactive fiction mapping program.

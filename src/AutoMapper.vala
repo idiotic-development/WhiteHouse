@@ -6,9 +6,10 @@ public class WhiteHouse.AutoMapper : Object
 		get {return _position;}
 		set
 		{
-			value.highlighted = true;
 			if (_position != null)
 				_position.highlighted = false;
+
+			value.highlighted = true;
 
 			_position = value;
 		}
@@ -18,9 +19,15 @@ public class WhiteHouse.AutoMapper : Object
 
 	int64 pos = 0;
 
-	public AutoMapper (File transcript, bool verbose, bool skip_to_end)
+	FileMonitor watch;
+	Window window;
+	Map map;
+
+	public AutoMapper (Window window, Map map, File transcript, bool verbose, bool skip_to_end)
 	{
+		this.map = map;
 		this.verbose = verbose;
+		this.window = window;
 
 		try
 		{
@@ -38,27 +45,16 @@ public class WhiteHouse.AutoMapper : Object
 				pos = 0;
 				read (transcript);
 			}
+
+			watch = transcript.monitor (FileMonitorFlags.NONE, null);
+			watch.changed.connect ((src) => read (src));
+
 		}  catch (Error e)
 		{
 			stderr.puts (@"Error in AutoMapper.vala:Constructor - $(e.message)\n");
 		}
 
 
-		// Setup watcher
-		new Thread<int> ("Watcher", () =>
-		{
-			try
-			{
-				var watch = transcript.monitor (FileMonitorFlags.NONE, null);
-				watch.changed.connect ((src) => read (src));
-			}  catch (Error e)
-			{
-				stderr.puts (@"Error in AutoMapper.vala:Watcher thread - $(e.message)\n");
-			}
-
-			Gtk.main ();
-			return 0;
-		});
 	}
 
 	private void read (File src)
@@ -96,7 +92,7 @@ public class WhiteHouse.AutoMapper : Object
 		
 		try
 		{
-			var regex_str = (verbose) ? Window.SETTINGS.get_string ("automap-regex-verbose") : Window.SETTINGS.get_string ("automap-regex-terse");
+			var regex_str = (verbose) ? SETTINGS.get_string ("automap-regex-verbose") : SETTINGS.get_string ("automap-regex-terse");
 			var regex = new Regex (regex_str, RegexCompileFlags.MULTILINE, 0);
 
 			MatchInfo info;
@@ -106,8 +102,6 @@ public class WhiteHouse.AutoMapper : Object
 				var name = info.fetch_named ("name");
 				var desc = info.fetch_named ("desc");
 				var cmd = " " + info.fetch_named ("cmd") + " ";
-
-				// stdout.puts (name+" "+desc+"\n");
 
 				if (name == null || (desc == null && verbose))
 					continue;
@@ -143,32 +137,75 @@ public class WhiteHouse.AutoMapper : Object
 		}
 	}
 
+	public void guess_exits (Room room)
+	{
+		if (/\bnorth\b/.match (room.desc, 0, null) && room.north == null)
+			room.north = map.new_passage (room, null);
+		
+		if (/\bnortheast\b/.match (room.desc, 0, null) && room.northeast == null)
+			room.northeast = map.new_passage (room, null);
+		
+		if (/\beast\b/.match (room.desc, 0, null) && room.east == null)
+			room.east = map.new_passage (room, null);
+		
+		if (/\bsoutheast\b/.match (room.desc, 0, null) && room.southeast == null)
+			room.southeast = map.new_passage (room, null);
+		
+		if (/\bsouth\b/.match (room.desc, 0, null) && room.south == null)
+			room.south = map.new_passage (room, null);
+		
+		if (/\bsouthwest\b/.match (room.desc, 0, null) && room.southwest == null)
+			room.southwest = map.new_passage (room, null);
+		
+		if (/\bwest\b/.match (room.desc, 0, null) && room.west == null)
+			room.west = map.new_passage (room, null);
+		
+		if (/\bnorthwest\b/.match (room.desc, 0, null) && room.northwest == null)
+			room.northwest = map.new_passage (room, null);
+
+		if (/\bup\b/.match (room.desc, 0, null) && room.up == null)
+		{
+			room.up = map.new_passage (room, null);
+			room.up.z += 0.5;
+		}
+
+		if (/\bdown\b/.match (room.desc, 0, null) && room.down == null)
+		{
+			room.down = map.new_passage (room, null);
+			room.down.z -= 0.5;
+		}
+	}
+
 	public void go (string direction, string name, string? desc)
 	{
 		Room room = null;
-		foreach (var drawable in Map.map.drawable_list)
+
+		foreach (var drawable in map.drawable_list)
 			if (drawable is Room && (drawable as Room).name == name)
 				if ((drawable as Room).desc == desc || !verbose)
 					room = drawable as Room;
 
 		if (room == null)
 		{
-			room = Map.map.new_room (name, desc);
+			room = map.new_room (name, desc);
 			if (position != null && direction != "")
-				Map.map.connect_rooms (position, room, direction);
+				map.connect_rooms (position, room, direction);
+
+			guess_exits (room);
 		} else if (position != null && direction != "")
 		{
 			var val = GLib.Value (typeof(Passage));
 			position.get_property (direction, ref val);
 			var p_val = val as Passage;
 			if (p_val == null)
-				Map.map.connect_rooms (position, room, direction);
+				map.connect_rooms (position, room, direction);
 			else if (p_val.start != room && p_val.end != room)
-				Map.map.connect_rooms (position, room, direction);
+				map.connect_rooms (position, room, direction);
 		}
 		
 		position = room;
+		window.center_room (position);
 
-		Map.map.queue_draw ();
+		map.queue_draw ();
 	}
 }

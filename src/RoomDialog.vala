@@ -21,6 +21,7 @@ class WhiteHouse.RoomDialog : Dialog
 		text = new TextView ();
 		text.left_margin = 5;
 		text.right_margin = 5;
+		text.set_border_window_size (TextWindowType.TOP, 5);
 		text.expand = true;
 		text.placeholder_text = "Description";
 		text.wrap_mode = WrapMode.WORD_CHAR;
