@@ -64,7 +64,7 @@ public class WhiteHouse.Preferences : Dialog
 		color.parse (SETTINGS.get_string ("room-background"));
 		var button3 = new ColorButton.with_rgba (color);
 		button3.color_set.connect (() => SETTINGS.set_string ("room-background", button3.rgba.to_string ()));
-		button3.margin_end = 10;
+		button3.margin_left = 10;
 		grid.add (button3);
 
 		label = new Label ("Outline");
@@ -73,7 +73,7 @@ public class WhiteHouse.Preferences : Dialog
 		color = Gdk.RGBA ();
 		color.parse (SETTINGS.get_string ("room-outline"));
 		var button4 = new ColorButton.with_rgba (color);
-		button4.margin_end = 10;
+		button4.margin_left = 10;
 		button4.color_set.connect (() => SETTINGS.set_string ("room-outline", button4.rgba.to_string ()));
 		grid.add (button4);
 
@@ -84,7 +84,7 @@ public class WhiteHouse.Preferences : Dialog
 		color.parse (SETTINGS.get_string ("room-text"));
 		var button5 = new ColorButton.with_rgba (color);
 		button5.color_set.connect (() => SETTINGS.set_string ("room-text", button5.rgba.to_string ()));
-		button5.margin_end = 10;
+		button5.margin_left = 10;
 		grid.add (button5);
 
 		label = new Label ("Detail");
@@ -94,7 +94,7 @@ public class WhiteHouse.Preferences : Dialog
 		color.parse (SETTINGS.get_string ("room-detail"));
 		var button6 = new ColorButton.with_rgba (color);
 		button6.color_set.connect (() => SETTINGS.set_string ("room-detail", button6.rgba.to_string ()));
-		button6.margin_end = 10;
+		button6.margin_left = 10;
 		grid.attach (button6, 1, 1, 1, 1);
 
 		label = new Label ("Inactive");
@@ -104,7 +104,7 @@ public class WhiteHouse.Preferences : Dialog
 		color.parse (SETTINGS.get_string ("room-inactive"));
 		var button7 = new ColorButton.with_rgba (color);
 		button7.color_set.connect (() => SETTINGS.set_string ("room-inactive", button7.rgba.to_string ()));
-		button7.margin_end = 10;
+		button7.margin_left = 10;
 		grid.attach (button7, 3, 1, 1, 1);
 
 		var font_box = new Box (Orientation.HORIZONTAL, 10);

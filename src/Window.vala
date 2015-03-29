@@ -118,7 +118,7 @@ namespace WhiteHouse
 			layout.add_overlay (down);
 			down.clicked.connect (() => map.z_level -= 1);
 			down.margin = 20;
-			down.margin_start = 60;
+			down.margin_right = 60;
 			down.valign = Align.END;
 			down.halign = Align.START;
 

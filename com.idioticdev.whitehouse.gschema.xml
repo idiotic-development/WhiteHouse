@@ -11,31 +11,31 @@
       <default>"rgb (255, 255, 255)"</default>
     </key>
     <key name="background-grid" type="s">
-      <default>"rgb (230, 230, 230)"</default>
+      <default>"rgb (238, 238, 236)"</default>
     </key>
     <key name="passage-line" type="s">
-      <default>"rgb (0, 0, 0)"</default>
+      <default>"rgb (85, 87, 83)"</default>
     </key>
     <key name="passage-detail" type="s">
-      <default>"rgb (0, 0, 0)"</default>
+      <default>"rgb (85, 87, 83)"</default>
     </key>
     <key name="passage-drawn" type="b">
-      <default>true</default>
+      <default>false</default>
     </key>
     <key name="room-background" type="s">
       <default>"rgb (255, 255, 255)"</default>
     </key>
     <key name="room-outline" type="s">
-      <default>"rgb (0, 0, 0)"</default>
+      <default>"rgb (32, 75, 135)"</default>
     </key>
     <key name="room-text" type="s">
-      <default>"rgb (0, 0, 0)"</default>
+      <default>"rgb (32, 75, 135)"</default>
     </key>
     <key name="room-detail" type="s">
-      <default>"rgb (0, 0, 0)"</default>
+      <default>"rgb (32, 75, 135)"</default>
     </key>
     <key name="room-inactive" type="s">
-      <default>"rgb (205, 205, 205)"</default>
+      <default>"rgb (211, 215, 207)"</default>
     </key>
     <key name="room-font" type="s">
       <default>""</default>
