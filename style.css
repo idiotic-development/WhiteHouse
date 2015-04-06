@@ -1,0 +1,63 @@
+body
+{
+	font-family: "monospace";
+}
+
+#header
+{
+	position: relative;
+	margin: 0 auto;
+	width: 1000px;
+	height: 20px;
+	padding: 5px 10px 1px 10px;
+	background-color: #000000;
+	color: #ffffff;
+}
+
+#moves
+{
+	float: right;
+}
+
+#box
+{
+	width: 100%;
+	position: fixed;
+	bottom: 10px;
+}
+
+#text
+{
+	width: 1000px;
+	max-height: 90%;
+	overflow: auto;
+	position: fixed;
+	bottom: 30px;
+	padding: 5px;
+}
+
+input
+{
+	border-width: 0;
+}
+
+#box span
+{
+	position: fixed;
+	bottom: 10px;
+	width: 100%;
+}
+
+#box
+{
+	width: 1000px;
+	margin: 0 auto;
+	position: relative;
+}
+
+a img
+{
+	border: 3px solid #dddddd;
+	border-radius: 5px;
+	margin: 5px;
+}

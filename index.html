@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>White House</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="lightbox/css/lightbox.css">
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="lightbox/js/lightbox.js"></script>
+	<script type="text/javascript" src="IF.js"></script>
+	<script type="text/javascript">
+		updateName = function (name)
+		{
+			$("#name").text (name);
+		}
+
+		var game = new Game ();
+
+		$(function() {
+			$("#text").html ((game.info () + game.me.pos.render ()).replace (/\n/g, "<br>\n"));
+			$("input")
+			 .keypress(function (e)
+				{
+					if (e.which == 13)
+					{
+						$("#text")
+						 .append (game.process ($(this).val ()).replace (/\n/g, "<br>\n"))
+						 .scrollTop($("#text").prop("scrollHeight"));
+						$(this).val ("");
+						$("#moves").text ("Moves: " + game.moves);
+					}
+				})
+			 .focus ();
+		}); 
+	</script>
+</head>
+<body>
+	<div id="header"><span id="name"></span><span id="moves">Moves: 0</span></div>
+	<div id="box">
+		<div id="text"></div>
+		<span>&gt;&nbsp;<input type="text"></span>
+	</div>
+</body>
+</html>
