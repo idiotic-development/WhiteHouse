@@ -16,14 +16,8 @@ Automatically builds a map by reading the game transcript as you play the game.
 * **Handles multi-floor maps**  
 Navigate maps floor by floor, or view with the 3d interface. (3d not yet implemented.)
 
-* **Native cross-platform GUI**  
-Built using Standard Widget Toolkit which wraps native widgets in java code. In other words, White House will look, feel, and act like the rest of your system.
+## Compiling ##
 
+There are not currently any binaries built so will have to compile from source. White House uses the standard linux build system.
 
-## Build and run ##
-
-There are not currently any binaries built, but compiling is very simple. The only dependence you will need is Java JDK 7. Included with the source is two build scripts: *build.bat* for windows and *build.sh* for linux and mac (will not work with Cygwin).
-
-To compile, execute `./build compile` from the root project directory. The script will automatically select the correct swt library for your system.
-
-To run, simply execute `./build run`.
+`./autogen.sh && make && sudo make install`
