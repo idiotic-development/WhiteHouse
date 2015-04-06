@@ -5,7 +5,7 @@ if (!String.prototype.startsWith) {
   };
 }
 
-function random (min, max)
+var random = function (min, max)
 {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -205,7 +205,11 @@ var Game = function ()
 
 Game.prototype.info = function ()
 {
-	return "White House: An interactive fiction mapper\nCopyright (c) 2015 Idiotic Design and Development.\nThis software is released under the GPL version 3.0+\nThe source can be viewed at <i>http://github.com/idiotic-development/WhiteHouse</i>\nVersion 1.0\n\n";
+	return "White House: An interactive fiction mapper\n" +
+			"Copyright (c) 2015 Idiotic Design and Development.\n" +
+			"This software is released under the GPL version 3.0+\n" +
+			"The source can be viewed at <i>http://github.com/idiotic-development/WhiteHouse</i>\n" +
+			"Version 1.0\n\n";
 }
 
 Game.prototype.process = function (cmd)
