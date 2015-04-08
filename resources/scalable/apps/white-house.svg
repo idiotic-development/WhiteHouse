@@ -15,8 +15,11 @@
    viewBox="0 0 200 200"
    id="svg4196"
    version="1.1"
-   inkscape:version="0.91+devel r"
-   sodipodi:docname="white-house.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="white-house.svg"
+   inkscape:export-filename="C:\Users\Christian\Desktop\White House\icons\256.png"
+   inkscape:export-xdpi="32.509998"
+   inkscape:export-ydpi="32.509998">
   <defs
      id="defs4198">
     <linearGradient
@@ -57,16 +60,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.9899495"
-     inkscape:cx="-49.907082"
-     inkscape:cy="360"
+     inkscape:zoom="0.47"
+     inkscape:cx="298.81875"
+     inkscape:cy="279.1878"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="3070"
-     inkscape:window-height="1752"
-     inkscape:window-x="130"
-     inkscape:window-y="48"
+     inkscape:window-width="1280"
+     inkscape:window-height="662"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata4201">
@@ -85,67 +88,59 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-97)">
-    <rect
-       style="opacity:1;fill:#505050;fill-opacity:1;stroke:#323232;stroke-width:0.97559041;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4755-0"
-       width="186.41063"
-       height="185.41353"
-       x="8.5012169"
-       y="105.51604"
-       rx="19.591658"
-       ry="19.43228" />
-    <rect
-       style="opacity:1;fill:#323232;fill-opacity:1;stroke:none;stroke-width:0.92147285;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4755"
-       width="176.21103"
-       height="174.98833"
-       x="8.2427578"
-       y="105.16672"
-       rx="18.519684"
-       ry="18.339668" />
+    <ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.05488408;stroke-opacity:1"
+       id="path4148"
+       cx="100.87942"
+       cy="197.62173"
+       rx="99.651039"
+       ry="99.3508"
+       inkscape:export-filename="C:\Users\Christian\Desktop\White House\icons\48.png"
+       inkscape:export-xdpi="6.1199999"
+       inkscape:export-ydpi="6.1199999" />
     <path
        style="fill:none;fill-opacity:1;stroke:#464646;stroke-width:6.0337019;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 36.204467,177.9649 -0.294871,74.02695 121.105864,0.34211 -0.34211,-74.36906"
+       d="m 39.863212,176.60804 -0.294871,74.02695 121.105869,0.34211 -0.34211,-74.36906"
        id="path4747"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;fill-opacity:1;stroke:#464646;stroke-width:6.03401184;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 22.112743,186.87575 74.577845,-55.30552 73.868082,55.30552"
+       d="m 25.771488,185.51889 74.577842,-55.30552 73.86809,55.30552"
        id="path4749"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:8.42958832px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#525252;fill-opacity:1;stroke:#505050;stroke-width:0.2107397px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="42.699886"
-       y="231.66902"
+       style="font-style:normal;font-weight:normal;font-size:8.42958832px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#525252;fill-opacity:1;stroke:#505050;stroke-width:0.2107397px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="46.344044"
+       y="230.30659"
        id="text4751"
        sodipodi:linespacing="125%"
        transform="scale(1.0040035,0.99601247)"><tspan
          sodipodi:role="line"
          id="tspan4753"
-         x="42.699886"
-         y="231.66902"
-         style="font-size:40.46201706px;fill:#525252;fill-opacity:1;stroke:#505050;stroke-width:0.2107397px;stroke-opacity:1;">&gt;_</tspan></text>
+         x="46.344044"
+         y="230.30659"
+         style="font-size:40.46201706px;fill:#525252;fill-opacity:1;stroke:#505050;stroke-width:0.2107397px;stroke-opacity:1">&gt;_</tspan></text>
     <path
        style="fill:none;fill-opacity:1;stroke:#464646;stroke-width:3.0208714;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 126.32953,172.78523 0,13.7018 10.84729,0 -0.5709,-11.98905 z"
+       d="m 129.98828,171.42837 0,13.7018 10.84729,0 -0.5709,-11.98905 z"
        id="path4149"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;fill-opacity:1;stroke:#464646;stroke-width:3.0208714;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 126.08747,191.97964 -0.60553,14.12928 12.1108,0.2018 0,-12.91822 z"
+       d="m 129.74622,190.62278 -0.60553,14.12928 12.1108,0.2018 0,-12.91822 z"
        id="path4151"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;fill-opacity:1;stroke:#464646;stroke-width:3.0208714;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 118.4173,171.39132 0,14.33107 -12.71633,0.2018 0.40368,-14.73479 z"
+       d="m 122.07605,170.03446 0,14.33107 -12.71633,0.2018 0.40368,-14.73479 z"
        id="path4153"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;fill-opacity:1;stroke:#464646;stroke-width:3.0208714;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 118.82101,192.1815 0,14.93663 -12.91818,-0.20178 -0.60557,-15.13853 z"
+       d="m 122.47976,190.82464 0,14.93663 -12.91818,-0.20178 -0.60557,-15.13853 z"
        id="path4155"
        inkscape:connector-curvature="0" />
   </g>
