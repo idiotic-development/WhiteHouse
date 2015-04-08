@@ -47,12 +47,12 @@ Me.prototype.examine = function (part)
 {
 	var items = this.pos.items;
 	for (var i = 0; i < items.length; i++)
-		if (items[i].name.split (" ").indexOf (part) != -1)
+		if (items[i].name.indexOf (part) != -1)
 			return items[i].examine + "\n";
 
 	items = this.inv;
 	for (var i = 0; i < items.length; i++)
-		if (items[i].name.split (" ").indexOf (part) != -1)
+		if (items[i].name.indexOf (part) != -1)
 			return items[i].examine + "\n";
 
 	return "Can not find the item '" + part + "'." + "\n";
@@ -62,7 +62,7 @@ Me.prototype.get = function (part)
 {
 	var items = this.pos.items;
 	for (var i = 0; i < items.length; i++)
-		if (items[i].name.split (" ").indexOf (part) != -1)
+		if (items[i].name.indexOf (part) != -1)
 		{
 			if (items[i].name == "LINUX stone")
 				downloadURL("http://github.com/idiotic-development/WhiteHouse/releases/download/1.0/white-house_1.0-1-1.deb");
@@ -76,7 +76,7 @@ Me.prototype.get = function (part)
 		}
 
 	for (var i = 0; i < this.inv.length; i++)
-		if (this.inv[i].name.split (" ").indexOf (part) != -1)
+		if (this.inv[i].name.indexOf (part) != -1)
 			return name + " is already in your inventory.";
 
 	return "Can not find the item '" + part + "'." + "\n";
@@ -85,7 +85,7 @@ Me.prototype.get = function (part)
 Me.prototype.drop = function (part)
 {
 	for (var i = 0; i < this.inv.length; i++)
-		if (this.inv[i].name.split (" ").indexOf (part) != -1)
+		if (this.inv[i].name.indexOf (part) != -1)
 		{
 			this.pos.put (this.inv[i]);
 			this.inv.splice (i, 1);
@@ -95,7 +95,7 @@ Me.prototype.drop = function (part)
 
 	var items = this.pos.items;
 	for (var i = 0; i < items.length; i++)
-		if (items[i].name.split (" ").indexOf (part) != -1)
+		if (items[i].name.indexOf (part) != -1)
 			return name + " is not in your inventory.";
 
 	return "Can not find the item '" + part + "'." + "\n";
@@ -189,7 +189,7 @@ var Game = function ()
 	var westOfHouse = new Room ("West of House", "You are standing in an open field west of a white house, with a boarded front door. To the south you can see a tree with the word \"DOWNLOAD\" carved into the trunk. In all other directions all you see is foreboding forest.");
 	var photos = new Item ("old photos", "There are some old photos here.", '<a href="screen1.png" data-lightbox="Screenshots"><img src="screen1_thumb.png"></a><a href="screen2.png" data-lightbox="Screenshots"><img src="screen2_thumb.png"></a><a href="screen3.png" data-lightbox="Screenshots"><img src="screen3_thumb.png"></a>');
 	westOfHouse.put (photos);
-	var readme = new Item ("crumbled paper", "There is a crumbled paper here labeled \"README\".",
+	var readme = new Item ("crumbled paper labeled README", "There is a crumbled paper here labeled \"README\".",
 		"After smoothing out the paper you can make out the following.\n\n<i>" +
 		"White House is a cross-platform interactive fiction mapping program." +
 		" To download go south and pick up one of the rocks, or visit the github" +
@@ -229,13 +229,18 @@ Game.prototype.info = function ()
 Game.prototype.process = function (cmd)
 {
 	var string = "> " + cmd + "\n";
+	if (cmd.startsWith ("go "))
+		cmd = cmd.substring (3);
+
 	if (cmd.startsWith ("x ") || cmd.startsWith ("examine "))
 		string += this.me.examine (cmd.substring (cmd.indexOf (" ")+1));
 	else if (cmd == "l" || cmd == "look")
 		string += this.me.pos.render ();
-	else if (cmd.startsWith ("get ") || cmd.startsWith ("pick up "))
+	else if (cmd.startsWith ("get ") || cmd.startsWith ("pickup "))
 		string += this.me.get (cmd.substring (cmd.indexOf (" ")+1));
-	else if (cmd.startsWith ("drop "))
+	else if (cmd.startsWith ("pick up ") || cmd.startsWith ("look at "))
+		string += this.me.get (cmd.substring (8));
+	else if (cmd.startsWith ("drop ") || cmd.startsWith ("throw "))
 		string += this.me.drop (cmd.substring (cmd.indexOf (" ")+1));
 	else if (cmd == "i" || cmd == "inventory")
 		string += this.me.render ();
