@@ -307,6 +307,20 @@ public class WhiteHouse.MenuBar : Gtk.MenuBar
 		item.add_accelerator("activate", accel_group, '+', Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE);
 		item.activate.connect (up_a_level);
 		menu.add (item);
+
+		item = new Gtk.MenuItem.with_mnemonic ("_Help");
+		add (item);
+
+		menu = new Gtk.Menu ();
+		item.set_submenu (menu);
+
+		item = new Gtk.MenuItem.with_label ("Documentation");
+		item.activate.connect (() => Gtk.show_uri (null, "http://github.com/idiotic-development/WhiteHouse/wiki/Documentation", Gdk.CURRENT_TIME));
+		menu.add (item);
+
+		item = new Gtk.MenuItem.with_label ("About");
+		item.activate.connect (() => (new AboutDialog (parent)).show_all ());
+		menu.add (item);
 	}
 
 	/* File menu */
