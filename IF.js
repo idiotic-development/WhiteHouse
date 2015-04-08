@@ -1,3 +1,13 @@
+var $idown;
+var downloadURL = function (url)
+{
+  if ($idown) {
+    $idown.attr('src',url);
+  } else {
+    $idown = $('<iframe>', { id:'idown', src:url }).hide().appendTo('body');
+  }
+}
+
 if (!String.prototype.startsWith) {
   String.prototype.startsWith = function(searchString, position) {
     position = position || 0;
@@ -54,15 +64,19 @@ Me.prototype.get = function (part)
 	for (var i = 0; i < items.length; i++)
 		if (items[i].name.split (" ").indexOf (part) != -1)
 		{
+			if (items[i].name == "LINUX stone")
+				downloadURL("http://github.com/idiotic-development/WhiteHouse/releases/download/1.0/white-house_1.0-1-1.deb");
+			else if (items[i].name == "WINDOWS rock")
+				downloadURL("https://github.com/idiotic-development/WhiteHouse/releases/download/1.0/white-house_1.0-1-1.msi");
+
 			this.inv.push (items[i]);
 			items.splice (i, 1);
 
 			return "Taken.\n";
 		}
 
-	items = this.inv;
-	for (var i = 0; i < items.length; i++)
-		if (items[i].name.split (" ").indexOf (part) != -1)
+	for (var i = 0; i < this.inv.length; i++)
+		if (this.inv[i].name.split (" ").indexOf (part) != -1)
 			return name + " is already in your inventory.";
 
 	return "Can not find the item '" + part + "'." + "\n";
@@ -190,9 +204,9 @@ var Game = function ()
 	var weirdTree = new Room ("Weird Tree", "In front of you stands a large tree with the letters \"DOWNLOAD\" carved in the tree bark at eye level. To the north is an open field. In all other directions all you see is foreboding forest");
 	westOfHouse.south = weirdTree;
 	weirdTree.north = westOfHouse;
-	var deb = new Item ("\"LINUX\" stone", "There is a smooth stone with \"LINUX\" etched into the surface here.");
+	var deb = new Item ("LINUX stone", "There is a smooth stone with \"LINUX\" etched into the surface here.");
 	weirdTree.put (deb);
-	var exe = new Item ("\"WINDOWS\" rock", "There is a jagged rock with \"WINDOWS\" scratched into the surface here.");
+	var exe = new Item ("WINDOWS rock", "There is a jagged rock with \"WINDOWS\" scratched into the surface here.");
 	weirdTree.put (exe);
 
 	var forest = new Forest ("Forest", "You find yourself in the midst of a dense forest. All directions look the same.", [westOfHouse, weirdTree]);
