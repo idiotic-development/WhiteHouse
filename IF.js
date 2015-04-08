@@ -220,9 +220,9 @@ var Game = function ()
 Game.prototype.info = function ()
 {
 	return "White House: An interactive fiction mapper\n" +
-			"Copyright (c) 2015 Idiotic Design and Development.\n" +
+			"Copyright (c) 2015 <a href=\"http://idioticdev.com\">Idiotic Design and Development</a>.\n" +
 			"This software is released under the GPL version 3.0+\n" +
-			"The source can be viewed at <i>http://github.com/idiotic-development/WhiteHouse</i>\n" +
+			"The source can be viewed at <a href=\"http://github.com/idiotic-development/WhiteHouse\"><i>http://github.com/idiotic-development/WhiteHouse</i></a>\n" +
 			"Version 1.0\n\n";
 }
 
