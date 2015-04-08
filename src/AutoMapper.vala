@@ -18,6 +18,7 @@ public class WhiteHouse.AutoMapper : Object
 	public bool verbose { get; set; default = true; }
 
 	int64 pos = 0;
+	uint64 last_modified;
 
 	FileMonitor watch;
 	Window window;
@@ -46,9 +47,27 @@ public class WhiteHouse.AutoMapper : Object
 				read (transcript);
 			}
 
-			watch = transcript.monitor (FileMonitorFlags.NONE, null);
-			watch.changed.connect ((src) => read (src));
+			if (SETTINGS.get_boolean ("automap-polling"))
+			{
+				last_modified = transcript.query_info(FileAttribute.TIME_MODIFIED, 0)
+									.get_attribute_uint64(FileAttribute.TIME_MODIFIED);
+				GLib.Timeout.add (SETTINGS.get_int ("automap-rate"), () =>
+				{
+					uint64 time = transcript.query_info(FileAttribute.TIME_MODIFIED, 0)
+									.get_attribute_uint64(FileAttribute.TIME_MODIFIED);
+					if (time > last_modified)
+					{
+						read (transcript);
+						last_modified = time;
+					}
 
+					return true;
+				});
+			} else
+			{
+				watch = transcript.monitor (FileMonitorFlags.NONE, null);
+				watch.changed.connect ((src) => read (src));
+			}
 		}  catch (Error e)
 		{
 			stderr.puts (@"Error in AutoMapper.vala:Constructor - $(e.message)\n");
@@ -59,6 +78,8 @@ public class WhiteHouse.AutoMapper : Object
 
 	private void read (File src)
 	{
+		stdout.puts ("Reading changes...\n");
+
 		try
 		{
 			// Read changes

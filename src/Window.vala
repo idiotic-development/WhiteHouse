@@ -21,12 +21,13 @@ namespace WhiteHouse
 			set_icon_name ("white-house");
 
 			title = "White House";
-			window_position = Gtk.WindowPosition.CENTER;
+
+			maximize ();
 			var box = new Box (Orientation.VERTICAL, 0);
 			add (box);
 			var layout = new Overlay ();
 			
-			box.add (layout);
+			box.pack_end (layout, true, true);
 			scrolled = new Gtk.ScrolledWindow (null, null);
 			layout.add (scrolled);
 
@@ -69,7 +70,7 @@ namespace WhiteHouse
 				((Adjustment)obj).value += (((Adjustment)obj).upper - h_upper) / 2;
 				h_upper = ((Adjustment)obj).upper;
 			});
-			scrolled.add (map);
+			scrolled.add_with_viewport (map);
 			layout.get_child_position.connect ((widget, out allocation) =>
 			{
 				if (widget is Scale)
@@ -118,7 +119,7 @@ namespace WhiteHouse
 			layout.add_overlay (down);
 			down.clicked.connect (() => map.z_level -= 1);
 			down.margin = 20;
-			down.margin_right = 60;
+			down.margin_left = 60;
 			down.valign = Align.END;
 			down.halign = Align.START;
 
@@ -140,7 +141,7 @@ namespace WhiteHouse
 			set_default_size (960, 800);
 
 			bar = new MenuBar (this, map, slider, scrolled);
-			box.pack_start (bar, false, false);
+			box.pack_end (bar, false, false);
 		}
 
 		public override bool delete_event (Gdk.EventAny event)

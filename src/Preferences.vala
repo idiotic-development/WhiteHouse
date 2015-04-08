@@ -183,6 +183,29 @@ public class WhiteHouse.Preferences : Dialog
 		var terse = new Entry ();
 		SETTINGS.bind ("automap-regex-terse", terse.buffer, "text", SettingsBindFlags.DEFAULT);
 		box.add (terse);
+
+		label = new Label ("How would you like the transcript file to be watched?");
+		box.add (label);
+
+		RadioButton monitor = new RadioButton.with_label_from_widget (null, "inotify");
+		box.add (monitor);
+
+		RadioButton poll = new RadioButton.with_label_from_widget (monitor, "polling");
+		box.add (poll);
+		SETTINGS.bind ("automap-polling", poll, "active", SettingsBindFlags.DEFAULT);
+		
+		SpinButton rate = new SpinButton.with_range (0, 5000, 100);
+		box.add (rate);
+		rate.margin_left = 20;
+		SETTINGS.bind ("automap-rate", rate, "value", SettingsBindFlags.DEFAULT);
+		rate.sensitive = poll.active;
+
+		poll.toggled.connect (() =>
+		{
+			rate.sensitive = poll.active;
+		});
+
+
 	}
 
 	public override void response (int id)

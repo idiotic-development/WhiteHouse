@@ -7,6 +7,12 @@
     <key name="automap-regex-terse" type="s">
       <default>"\\s?>\\s?(?&lt;cmd&gt;.+)$\\R(?:(?:^[^>].*$\\R)*^\\s*$\\R)?^(?&lt;name&gt;[A-Z][a-zA-Z']*(?: [a-z]{1,3}| [A-Z][a-z']{3,})*) ?(?:[,([{-].*)?$\\R(?&lt;desc&gt;^[^>].+$)?"</default>
     </key>
+    <key name="automap-polling" type="b">
+      <default>false</default>
+    </key>
+    <key name="automap-rate" type="i">
+      <default>500</default>
+    </key>
     <key name="background-color" type="s">
       <default>"rgb (255, 255, 255)"</default>
     </key>
