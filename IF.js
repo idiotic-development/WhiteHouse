@@ -232,7 +232,9 @@ Game.prototype.process = function (cmd)
 	if (cmd.startsWith ("go "))
 		cmd = cmd.substring (3);
 
-	if (cmd.startsWith ("x ") || cmd.startsWith ("examine "))
+	if (cmd == "help")
+		string += "Supported commands.\n---\nlook\n inventory\n examine [item]\n get [item]\n drop [item]\n north, south, east, west, northeast, northwest, southeast, southwest\n";
+	else if (cmd.startsWith ("x ") || cmd.startsWith ("examine "))
 		string += this.me.examine (cmd.substring (cmd.indexOf (" ")+1));
 	else if (cmd == "l" || cmd == "look")
 		string += this.me.pos.render ();
@@ -256,7 +258,7 @@ Game.prototype.process = function (cmd)
 			cmd == "se" || cmd == "southeast")
 		string += this.me.wander ();
 	else
-		string += "Unknown command.\n";
+		string += "Unknown command.\nTry 'help'\n";
 
 	this.moves++;
 
